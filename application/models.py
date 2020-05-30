@@ -30,9 +30,23 @@ class Image(db.Model):
     data = db.Column(db.LargeBinary())
     categories = db.Column(db.String(255))
     public = db.Column(db.Integer())
+    file_name = db.Column(db.String(255))
 
-    def __init__(self, user_id, data):
+    def __init__(self, user_id, file_name, data):
         self.data = data
         self.categories = ''
         self.public = 0
-        self.user_id = User(id=user_id)
+        self.user_id = User.query.get(user_id).id
+        self.file_name = file_name
+
+    @staticmethod
+    def get_all_public_images():
+        images = Image.query.filter(Image.public == 1)
+        return images
+
+    @staticmethod
+    def get_allowed_images_from_user(queried_user, querying_user):
+        if queried_user == querying_user:
+            return Image.query.filter(Image.user_id == querying_user)
+        else:
+            return Image.query.filter((Image.user_id == queried_user) & Image.public)

@@ -1,8 +1,10 @@
-from flask import request, render_template, jsonify, url_for, redirect, g
+from flask import request, render_template, jsonify, url_for, redirect, g, send_file
 from .models import User, Image
 from index import app, db
 from sqlalchemy.exc import IntegrityError
 from .utils.auth import generate_token, requires_auth, verify_token
+from werkzeug.utils import secure_filename
+import io
 
 
 @app.route('/', methods=['GET'])
@@ -64,23 +66,85 @@ def is_token_valid():
         return jsonify(token_is_valid=False), 403
 
 """------------------ Image endpoints -----------------------"""
-@app.route("/images/all", methods=["GET"])
+@app.route("/api/all_public_images", methods=["GET"])
 @requires_auth
-def images_all():
-    return jsonify(result=g.current_user)
+def all_public_images():
+    all_allowed_images = Image.get_all_public_images()  # Permissions
+    result = []
+    for image in all_allowed_images:
+        result.append({
+            'id':image.id,
+            'categories':image.categories,
+            'public':image.public,
+            'file_name':image.file_name
+        })
+    return jsonify(result=result)
 
-@app.route("/images/<id>", methods=["GET"])
+@app.route("/api/all_images_by_user/<user_id>", methods=["GET"])
 @requires_auth
-def images_id(id):
-    return jsonify(result=g.current_user)
+def all_images_by_user(user_id):
+    all_images_by_user = Image.get_allowed_images_from_user(int(user_id), g.current_user['id'])  # Permissions
+    result = []
+    for image in all_images_by_user:
+        result.append({
+            'id':image.id,
+            'categories':image.categories,
+            'public':image.public,
+            'file_name':image.file_name
+        })
+    return jsonify(result=result)
 
-@app.route("/image/new", methods=["POST"])
+@app.route("/api/image/<id>", methods=["GET"])
 @requires_auth
-def image_new():
+def get_image(id):
+    image = Image.query.get(int(id))
+    if image.user_id != g.current_user['id'] and not image.public:  # Permissions control
+        return jsonify(error=True), 403
+
+    return jsonify(
+        id=image.id,
+        categories=image.categories,
+        public=image.public,
+        file_name=image.file_name
+    )
+
+@app.route("/api/image/<id>", methods=["POST"])
+@requires_auth
+def edit_image(id):
+    image = Image.query.get(id)
+    if image.user_id != g.current_user['id'] :  # Permissions control
+        return jsonify(result=g.current_user)
+
     incoming = request.get_json()
+    image.categories = incoming["categories"]
+    image.public = incoming["public"]
+
+    db.session.commit()
+
+    return jsonify(
+        id=image.id,
+        categories=image.categories,
+        public=image.public,
+        file_name=image.file_name
+    )
+
+@app.route("/api/image_file/<id>", methods=["GET"])
+@requires_auth
+def get_image_file(id):
+    image = Image.query.get(id)
+    if image.user_id == g.current_user['id'] or image.public:  # Permissions control
+        return send_file(io.BytesIO(image.data), attachment_filename=image.file_name)
+    else:
+        return jsonify(error=True), 403
+
+@app.route("/api/image_file", methods=["POST"])
+@requires_auth
+def new_image():
+    file = request.files['image_data']
     image = Image(
-        user_id=g.current_user.id,
-        data=incoming["data"]
+        user_id=g.current_user['id'],
+        data=file.read(),
+        file_name=secure_filename(file.filename)
     )
     db.session.add(image)
 
@@ -91,12 +155,7 @@ def image_new():
 
     return jsonify(
         id=image.id,
-        data=image.data,
         categories=image.categories,
-        public=image.public
+        public=image.public,
+        file_name=image.file_name
     )
-
-@app.route("/image/edit", methods=["POST"])
-@requires_auth
-def image_edit():
-    return jsonify(result=g.current_user)
