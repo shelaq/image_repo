@@ -5,6 +5,7 @@ class User(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String(255))
+    images = db.relationship('Image', backref='user', lazy=True)
 
     def __init__(self, email, password):
         self.email = email
@@ -25,11 +26,13 @@ class User(db.Model):
 
 class Image(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
+    user_id = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
     data = db.Column(db.LargeBinary())
     categories = db.Column(db.String(255))
     public = db.Column(db.Integer())
 
-    def __init__(self, data):
+    def __init__(self, user_id, data):
         self.data = data
         self.categories = ''
         self.public = 0
+        self.user_id = User(id=user_id)
