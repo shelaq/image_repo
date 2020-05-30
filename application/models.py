@@ -22,3 +22,14 @@ class User(db.Model):
             return user
         else:
             return None
+
+class Image(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    data = db.Column(db.LargeBinary())
+    categories = db.Column(db.String(255))
+    public = db.Column(db.Integer())
+
+    def __init__(self, data):
+        self.data = data
+        self.categories = ''
+        self.public = 0
