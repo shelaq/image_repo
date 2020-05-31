@@ -32,10 +32,10 @@ class Image(db.Model):
     public = db.Column(db.Integer())
     file_name = db.Column(db.String(255))
 
-    def __init__(self, user_id, file_name, data):
+    def __init__(self, user_id, file_name, data, categories=None, public=0):
         self.data = data
-        self.categories = ''
-        self.public = 0
+        self.categories = categories
+        self.public = public
         self.user_id = User.query.get(user_id).id
         self.file_name = file_name
 

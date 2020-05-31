@@ -160,7 +160,9 @@ def new_image():
     image = Image(
         user_id=g.current_user['id'],
         data=file.read(),
-        file_name=secure_filename(file.filename)
+        file_name=secure_filename(file.filename),
+        categories=request.form.get('categories'),
+        public=int(request.form.get('public'))
     )
     db.session.add(image)
 

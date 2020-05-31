@@ -4,6 +4,7 @@ import auth from './auth';
 import data from './data';
 import myImages from './myImages';
 import publicImages from './publicImages';
+import uploadImage from './uploadImage';
 
 const appReducer = combineReducers({
     routing: routerReducer,
@@ -11,7 +12,8 @@ const appReducer = combineReducers({
     auth,
     data,
     myImages,
-    publicImages
+    publicImages,
+    uploadImage
 })
 
 const rootReducer = (state, action) => {

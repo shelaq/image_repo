@@ -14,6 +14,7 @@ import NotFound from './components/NotFound';
 
 import MyImages from './components/Images/MyImages';
 import PublicImages from './components/Images/PublicImages';
+import UploadImage from './components/Images/UploadImage';
 
 import { DetermineAuth } from './components/DetermineAuth';
 import { requireAuthentication } from './components/AuthenticatedComponent';
@@ -28,6 +29,7 @@ export default (
         <Route path="analytics" component={requireAuthentication(Analytics)} />
         <Route path="myImages" component={requireAuthentication(MyImages)} />
         <Route path="publicImages" component={requireAuthentication(PublicImages)} />
+        <Route path="uploadImage" component={requireAuthentication(UploadImage)} />
         <Route path="*" component={DetermineAuth(NotFound)} />
     </Route>
 );

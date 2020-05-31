@@ -50,3 +50,19 @@ export function my_images(token) {
 export function public_images(token) {
     return axios.get('/api/all_public_images', tokenConfig(token));
 }
+
+export function upload_image(token, file, isPublic, categories) {
+  var bodyFormData = new FormData();
+    bodyFormData.set('public', isPublic);
+    bodyFormData.set('categories', categories);
+    bodyFormData.append('image_data', file);
+    return axios({
+      method: 'post',
+      url: '/api/image_file',
+      data: bodyFormData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        'Authorization': token
+       }
+    });
+}

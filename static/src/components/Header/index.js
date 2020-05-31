@@ -86,6 +86,10 @@ export class Header extends Component {
                                     Public Images
                                 </MenuItem>
                                 <Divider />
+                                <MenuItem onClick={() => this.dispatchNewRoute('/uploadImage')}>
+                                    Upload Image
+                                </MenuItem>
+                                <Divider />
                                 <MenuItem onClick={(e) => this.logout(e)}>
                                     Logout
                                 </MenuItem>
