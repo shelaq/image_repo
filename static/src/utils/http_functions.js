@@ -42,3 +42,11 @@ export function has_github_token(token) {
 export function data_about_user(token) {
     return axios.get('/api/user', tokenConfig(token));
 }
+
+export function my_images(token) {
+    return axios.get('/api/all_images_by_user', tokenConfig(token));
+}
+
+export function public_images(token) {
+    return axios.get('/api/all_public_images', tokenConfig(token));
+}

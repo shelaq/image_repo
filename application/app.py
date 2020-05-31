@@ -80,9 +80,23 @@ def all_public_images():
         })
     return jsonify(result=result)
 
+@app.route("/api/all_images_by_user", methods=["GET"])
+@requires_auth
+def all_images_by_user_default():
+    all_images_by_user = Image.get_allowed_images_from_user(g.current_user['id'], g.current_user['id'])
+    result = []
+    for image in all_images_by_user:
+        result.append({
+            'id':image.id,
+            'categories':image.categories,
+            'public':image.public,
+            'file_name':image.file_name
+        })
+    return jsonify(result=result)
+
 @app.route("/api/all_images_by_user/<user_id>", methods=["GET"])
 @requires_auth
-def all_images_by_user(user_id):
+def all_images_by_user_id(user_id):
     all_images_by_user = Image.get_allowed_images_from_user(int(user_id), g.current_user['id'])  # Permissions
     result = []
     for image in all_images_by_user:
@@ -128,14 +142,16 @@ def edit_image(id):
         file_name=image.file_name
     )
 
-@app.route("/api/image_file/<id>", methods=["GET"])
-@requires_auth
+@app.route("/image_server/<id>", methods=["GET"])
+# @requires_auth
 def get_image_file(id):
     image = Image.query.get(id)
-    if image.user_id == g.current_user['id'] or image.public:  # Permissions control
-        return send_file(io.BytesIO(image.data), attachment_filename=image.file_name)
-    else:
-        return jsonify(error=True), 403
+    return send_file(io.BytesIO(image.data), attachment_filename=image.file_name)  # TODO: permissions change back
+
+    # if image.user_id == g.current_user['id'] or image.public:  # Permissions control
+    #     return send_file(io.BytesIO(image.data), attachment_filename=image.file_name)
+    # else:
+    #     return jsonify(error=True), 403
 
 @app.route("/api/image_file", methods=["POST"])
 @requires_auth
