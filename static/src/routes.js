@@ -12,6 +12,9 @@ import ProtectedView from './components/ProtectedView';
 import Analytics from './components/Analytics';
 import NotFound from './components/NotFound';
 
+import MyImages from './components/Images/MyImages';
+import PublicImages from './components/Images/PublicImages';
+
 import { DetermineAuth } from './components/DetermineAuth';
 import { requireAuthentication } from './components/AuthenticatedComponent';
 import { requireNoAuthentication } from './components/notAuthenticatedComponent';
@@ -23,6 +26,8 @@ export default (
         <Route path="register" component={requireNoAuthentication(RegisterView)} />
         <Route path="home" component={requireNoAuthentication(HomeContainer)} />
         <Route path="analytics" component={requireAuthentication(Analytics)} />
+        <Route path="myImages" component={requireAuthentication(MyImages)} />
+        <Route path="publicImages" component={requireAuthentication(PublicImages)} />
         <Route path="*" component={DetermineAuth(NotFound)} />
     </Route>
 );

@@ -14,7 +14,7 @@ function mapStateToProps(state) {
     return {
         token: state.auth.token,
         userName: state.auth.userName,
-        isAuthenticated: state.auth.isAuthenticated,
+        isAuthenticated: state.auth.isAuthenticated
     };
 }
 
@@ -78,11 +78,14 @@ export class Header extends Component {
                             </div>
                             :
                             <div>
-                                <MenuItem onClick={() => this.dispatchNewRoute('/analytics')}>
-                                    Analytics
+                                <MenuItem onClick={() => this.dispatchNewRoute('/myImages')}>
+                                    My Images
                                 </MenuItem>
                                 <Divider />
-
+                                <MenuItem onClick={() => this.dispatchNewRoute('/publicImages')}>
+                                    Public Images
+                                </MenuItem>
+                                <Divider />
                                 <MenuItem onClick={(e) => this.logout(e)}>
                                     Logout
                                 </MenuItem>
@@ -90,7 +93,7 @@ export class Header extends Component {
                     }
                 </LeftNav>
                 <AppBar
-                  title="React-Redux-Flask"
+                  title=""
                   onLeftIconButtonTouchTap={() => this.openNav()}
                   iconElementRight={
                       <FlatButton label="Home" onClick={() => this.dispatchNewRoute('/')} />
