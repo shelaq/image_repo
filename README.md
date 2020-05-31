@@ -1,6 +1,15 @@
 
 # Boilerplate taken from: https://github.com/dternyak/React-Redux-Flask
 
+# To run:
+`python manage.py create_db`
+`python manage.py db upgrade`
+`python manage.py runserver`
+
+In `static` folder
+`npm install`
+`npm start`
+
 # React-Redux-Flask #
 
 Boilerplate application for a Flask JWT Backend and a React/Redux Front-End with Material UI.
